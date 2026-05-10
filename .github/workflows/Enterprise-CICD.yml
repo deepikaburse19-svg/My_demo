@@ -1,0 +1,34 @@
+name: Enterprise CI/CD
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - run: echo "Build step"
+
+  test:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - run: echo "Test step"
+
+  artifact:
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - run: echo "Artifact step" > result.txt
+      - uses: actions/upload-artifact@v3
+        with:
+          name: results
+          path: result.txt
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: artifact
+    steps:
+      - run: echo "Deploy step"
