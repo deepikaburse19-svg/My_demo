@@ -1,0 +1,30 @@
+name: Docker-Pipeline
+
+on: workflow_dispatch    
+  # Triggers the workflow on push or pull request events but only for the "main" branch
+
+permissions:
+  contents: read
+  packages: write
+  pull-requests: write
+  actions: read
+
+jobs:
+  ci-job:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: copy code to github hosted runner
+        uses: actions/checkout@v4
+      
+      - name: docker login
+        uses: docker/login-actions@v3
+        with:
+          username: ${{ secrets.ACCESS_USERNAME }}
+          passward: ${{ secrets.ACCESS_PASSWARD_DOCKER }}
+          
+      - name: build docker image
+        run: docker build -t mydevopsdemo/githubdemo:latest .
+     
+      - name: docker push
+        run: docker push mydevopsdemo/githubdemo:latest
